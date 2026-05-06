@@ -12,11 +12,23 @@ body {
   margin: 0 auto;
   padding: 20px;
 }
+.scoreboard {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 10px 0 14px;
+  padding: 10px 12px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  color: #e2e8f0;
+}
 canvas {
   width: 100%;
   border: 2px solid #374151;
   border-radius: 12px;
   background: radial-gradient(circle at 50% 20%, #1f2937, #0b1020);
+  touch-action: none;
 }
 .legend {
   margin-top: 12px;

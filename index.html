@@ -3,16 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Casse-briques personnalisé</title>
+  <title>Casse-briques Bruno & Chahra</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="app">
-    <h1>Casse-briques : "GÉROME BILLOIS"</h1>
+    <h1>Casse-briques : Bruno & Chahra</h1>
     <p>
-      Les briques affichent au départ "GÉROME BILLOIS". Quand une brique casse, une vignette tombe
-      (placeholder) pour Bruno/Chahra.
+      Les briques forment le texte <strong>BRUNO CHAHRA</strong>. Quand une brique casse, une vignette tombe.
+      Attrapez-les avec la barre du bas (flèches gauche/droite, souris, ou tactile) pour augmenter le compteur.
     </p>
+
+    <div class="scoreboard" aria-live="polite">
+      <span>Bruno récolté : <strong id="score-bruno">0</strong></span>
+      <span>Chahra récoltée : <strong id="score-chahra">0</strong></span>
+    </div>
+
     <canvas id="game" width="960" height="600" aria-label="Jeu casse-briques"></canvas>
     <div class="legend">
       <strong>Personnalisation :</strong>
