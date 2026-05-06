@@ -1,11 +1,15 @@
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 
+const scoreBrunoEl = document.getElementById('score-bruno');
+const scoreChahraEl = document.getElementById('score-chahra');
+
 const paddle = { w: 140, h: 14, x: canvas.width / 2 - 70, y: canvas.height - 30, speed: 8 };
 const ball = { x: canvas.width / 2, y: canvas.height - 60, r: 9, dx: 4, dy: -4 };
 
 const keys = { left: false, right: false };
 const drops = [];
+const scores = { bruno: 0, chahra: 0 };
 
 const photoUrls = {
   bruno: '', // ex: 'https://.../bruno.jpg'
@@ -19,6 +23,11 @@ for (const [name, url] of Object.entries(photoUrls)) {
     img.src = url;
     photoCache[name] = img;
   }
+}
+
+function updateScoreboard() {
+  scoreBrunoEl.textContent = String(scores.bruno);
+  scoreChahraEl.textContent = String(scores.chahra);
 }
 
 function createBricksFromText(text) {
@@ -36,7 +45,7 @@ function createBricksFromText(text) {
   octx.fillText(text, off.width / 2, off.height / 2);
 
   const data = octx.getImageData(0, 0, off.width, off.height).data;
-  const bw = 30, bh = 14, gap = 4;
+  const bw = 30; const bh = 14; const gap = 4;
   const bricks = [];
 
   for (let y = 0; y < 180; y += (bh + gap)) {
@@ -53,7 +62,7 @@ function createBricksFromText(text) {
   return bricks;
 }
 
-const bricks = createBricksFromText('GÉROME BILLOIS');
+const bricks = createBricksFromText('BRUNO CHAHRA');
 
 function spawnDrop(x, y) {
   const person = Math.random() > 0.5 ? 'bruno' : 'chahra';
@@ -121,8 +130,19 @@ function update() {
   });
 
   drops.forEach((d) => d.y += d.vy);
+
   for (let i = drops.length - 1; i >= 0; i -= 1) {
-    if (drops[i].y - drops[i].r > canvas.height) drops.splice(i, 1);
+    const drop = drops[i];
+    if (collideRectCircle(paddle, drop)) {
+      scores[drop.person] += 1;
+      updateScoreboard();
+      drops.splice(i, 1);
+      continue;
+    }
+
+    if (drop.y - drop.r > canvas.height) {
+      drops.splice(i, 1);
+    }
   }
 }
 
@@ -152,6 +172,13 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
+function movePaddleToClientX(clientX) {
+  const rect = canvas.getBoundingClientRect();
+  const localX = ((clientX - rect.left) / rect.width) * canvas.width;
+  paddle.x = localX - paddle.w / 2;
+  paddle.x = Math.max(0, Math.min(canvas.width - paddle.w, paddle.x));
+}
+
 document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowLeft') keys.left = true;
   if (e.key === 'ArrowRight') keys.right = true;
@@ -162,4 +189,13 @@ document.addEventListener('keyup', (e) => {
   if (e.key === 'ArrowRight') keys.right = false;
 });
 
+canvas.addEventListener('mousemove', (e) => movePaddleToClientX(e.clientX));
+canvas.addEventListener('touchmove', (e) => {
+  if (e.touches[0]) {
+    movePaddleToClientX(e.touches[0].clientX);
+  }
+  e.preventDefault();
+}, { passive: false });
+
+updateScoreboard();
 loop();
